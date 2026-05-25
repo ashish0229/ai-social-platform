@@ -1,0 +1,30 @@
+[
+  {
+    "name": "hate_speech",
+    "description": "Detects hateful, abusive, or discriminatory language against protected groups.",
+    "sensitivity": 0.85,
+    "yellowThreshold": 0.55,
+    "redThreshold": 0.8,
+    "yellowAction": "send_to_moderator_review",
+    "redAction": "reject_post"
+  },
+  {
+    "name": "toxicity",
+    "description": "Detects insults, threats, harassment, and hostile content.",
+    "sensitivity": 0.8,
+    "yellowThreshold": 0.5,
+    "redThreshold": 0.75,
+    "yellowAction": "quarantine_post",
+    "redAction": "reject_post"
+  },
+  {
+    "name": "self_harm",
+    "description": "Detects self-harm instructions or encouragement.",
+    "sensitivity": 0.9,
+    "yellowThreshold": 0.45,
+    "redThreshold": 0.7,
+    "yellowAction": "send_to_moderator_review",
+    "redAction": "reject_post"
+  }
+]
+
