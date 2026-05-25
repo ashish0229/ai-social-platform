@@ -1,0 +1,79 @@
+services:
+  - type: web
+    runtime: node
+    name: ai-social-platform-backend
+    plan: starter
+    buildCommand: cd backend && npm install && npx prisma generate && npm run build
+    startCommand: cd backend && npx prisma db push && npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ai-social-platform-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: ai-social-platform-redis
+          property: connectionString
+      - key: AI_SERVICE_HOSTPORT
+        fromService:
+          type: web
+          name: ai-social-platform-ai
+          property: hostport
+      - key: FRONTEND_URL
+        value: https://ai-social-platform-frontend.onrender.com
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: JWT_ACCESS_EXPIRES_IN
+        value: 15m
+      - key: JWT_REFRESH_EXPIRES_IN
+        value: 7d
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+      - key: PORTFOLIO_OWNER_EMAIL
+        sync: false
+
+  - type: web
+    runtime: node
+    name: ai-social-platform-frontend
+    plan: starter
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npx next start -p $PORT
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://ai-social-platform-backend.onrender.com
+      - key: NEXT_PUBLIC_SOCKET_URL
+        value: https://ai-social-platform-backend.onrender.com
+
+  - type: web
+    runtime: python
+    name: ai-social-platform-ai
+    plan: starter
+    buildCommand: cd ai-service && pip install -r requirements.txt
+    startCommand: cd ai-service && uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+
+  - type: keyvalue
+    name: ai-social-platform-redis
+    plan: starter
+    ipAllowList: []
+    maxmemoryPolicy: allkeys-lru
+
+databases:
+  - name: ai-social-platform-db
+    databaseName: ai_social
+    user: ai_social_user
+    plan: basic-256mb
