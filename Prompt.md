@@ -523,9 +523,7 @@ Receiver email for form alerts.
 
 Produce a short but complete Error Handling and Documentation requirements section aligned with our backend project.
 
-Do not write full code.  
-Keep it clear, accurate, humanized, and implementation-ready.  
----
+
 
 **Output Requirements**
 
